@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+coverage/
+*.local
+*.tsbuildinfo
+.vercel/
+.supabase/
+supabase/.temp/
+android/.gradle/
+android/local.properties
+ios/App/Pods/
+.DS_Store
+qa/
+*.jks
+*.keystore
+*.p12
+*.mobileprovision
+
+# Keep Markdown documentation local; do not publish it to GitHub.
+*.[mM][dD]
+*.[mM][aA][rR][kK][dD][oO][wW][nN]

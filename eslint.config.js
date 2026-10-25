@@ -5,7 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'android', 'ios', 'supabase/functions', 'qa'] },
+  { ignores: ['dist', 'node_modules', 'supabase/functions', 'qa'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   { files: ['scripts/**/*.mjs'], languageOptions: { globals: globals.node } },

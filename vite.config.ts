@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     optimizeDeps: { entries: ['index.html'] },
     server: {
-      watch: { ignored: ['**/qa/**', '**/android/**', '**/ios/**'] },
+      watch: { ignored: ['**/qa/**'] },
     },
     build: {
       rolldownOptions: {

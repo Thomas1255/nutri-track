@@ -9,9 +9,6 @@ coverage/
 .vercel/
 .supabase/
 supabase/.temp/
-android/.gradle/
-android/local.properties
-ios/App/Pods/
 .DS_Store
 qa/
 *.jks

@@ -83,6 +83,14 @@ it('shows an empty historical date without carrying today’s meals across', asy
   await screen.findByRole('button', { name: 'Edit Rolled oats' })
   expect(screen.getByLabelText('Choose diary date')).toHaveValue(localDate())
 })
+it('leaves the demo through the compact header control and protects the diary', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+  await user.click(await screen.findByRole('button', { name: 'Leave local demo' }))
+  await screen.findByRole('heading', { name: 'Welcome back.' })
+  expect(sessionStorage.getItem('nutritrack.demo')).toBeNull()
+  expect(screen.queryByRole('button', { name: 'Edit Rolled oats' })).not.toBeInTheDocument()
+})
 it('saves independent manual targets and protects the signed-out route', async () => {
   const user = userEvent.setup()
   window.history.replaceState({}, '', '/profile')

@@ -33,7 +33,19 @@ export function AppLayout() {
     diary = useDiary(),
     navigate = useNavigate()
   const [adding, setAdding] = useState(false)
+  const [signingOut, setSigningOut] = useState(false)
   const name = diary.profile.display_name || auth.session?.user.email?.split('@')[0] || 'You'
+  async function signOut() {
+    setSigningOut(true)
+    try {
+      await auth.signOut()
+      navigate('/login')
+    } catch (error) {
+      toast.error(errorMessage(error))
+    } finally {
+      setSigningOut(false)
+    }
+  }
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">
@@ -85,14 +97,8 @@ export function AppLayout() {
           </a>
           <button
             className="user-menu"
-            onClick={async () => {
-              try {
-                await auth.signOut()
-                navigate('/login')
-              } catch (e) {
-                toast.error(errorMessage(e))
-              }
-            }}
+            onClick={() => void signOut()}
+            disabled={signingOut}
             aria-label={auth.demo ? 'Leave demo' : 'Sign out'}
           >
             <span className="avatar">{name.slice(0, 1).toUpperCase()}</span>
@@ -129,6 +135,17 @@ export function AppLayout() {
               <RefreshCw size={17} className={diary.loading ? 'animate-spin' : ''} />
             </Button>
             <span className="avatar top-avatar">{name.slice(0, 1).toUpperCase()}</span>
+            <Button
+              className="mobile-sign-out"
+              variant="ghost"
+              size="icon"
+              onClick={() => void signOut()}
+              disabled={signingOut}
+              aria-label={auth.demo ? 'Leave local demo' : 'Sign out of account'}
+              title={auth.demo ? 'Leave demo' : 'Sign out'}
+            >
+              <LogOut size={18} />
+            </Button>
           </div>
         </header>
         {auth.demo && (

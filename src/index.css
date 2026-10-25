@@ -292,6 +292,9 @@ button:disabled {
 .mobile-brand {
   display: none;
 }
+.mobile-sign-out {
+  display: none;
+}
 .demo-banner {
   display: flex;
   justify-content: space-between;
@@ -1567,6 +1570,11 @@ button:disabled {
   }
   .top-avatar {
     display: none;
+  }
+  .topbar .mobile-sign-out {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
   }
   .topbar .connection-status {
     font-size: 9px;

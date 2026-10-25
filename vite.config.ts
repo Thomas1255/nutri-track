@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
       },
       setupFiles: ['./src/test/setup.ts'],
       css: false,
-      exclude: ['node_modules/**', 'supabase/**'],
+      exclude: ['node_modules/**', 'supabase/**', 'qa/**'],
     },
   }
 })

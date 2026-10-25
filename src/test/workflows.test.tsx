@@ -83,6 +83,37 @@ it('shows an empty historical date without carrying today’s meals across', asy
   await screen.findByRole('button', { name: 'Edit Rolled oats' })
   expect(screen.getByLabelText('Choose diary date')).toHaveValue(localDate())
 })
+it('keeps both website navigation menus and the breadcrumb in sync across pages', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+  await screen.findByRole('button', { name: 'Edit Rolled oats' })
+  const sidebar = within(screen.getByRole('navigation', { name: 'Main navigation' }))
+  const compact = within(screen.getByRole('navigation', { name: 'Compact navigation' }))
+  const header = within(screen.getByRole('banner'))
+
+  await user.click(sidebar.getByRole('link', { name: 'My foods' }))
+  await screen.findByRole('heading', { name: 'A place for your favorites.' })
+  expect(compact.getByRole('link', { name: 'My foods' })).toHaveAttribute('aria-current', 'page')
+  expect(header.getByText('My foods')).toBeInTheDocument()
+
+  await user.click(compact.getByRole('link', { name: 'Profile' }))
+  await screen.findByRole('heading', { name: 'Your goals, your way.' })
+  expect(sidebar.getByRole('link', { name: 'Profile & goals' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  expect(header.getByText('Profile & goals')).toBeInTheDocument()
+
+  await user.click(compact.getByRole('button', { name: 'Add food' }))
+  await screen.findByRole('textbox', { name: 'Search foods' })
+  await user.keyboard('{Escape}')
+  await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+
+  await user.click(sidebar.getByRole('link', { name: 'Food diary' }))
+  await screen.findByRole('heading', { name: 'Your food diary' })
+  expect(compact.getByRole('link', { name: 'Food diary' })).toHaveAttribute('aria-current', 'page')
+  expect(header.getByText('Food diary')).toBeInTheDocument()
+})
 it('leaves the demo through the compact header control and protects the diary', async () => {
   const user = userEvent.setup()
   render(<App />)

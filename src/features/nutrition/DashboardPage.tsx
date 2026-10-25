@@ -44,7 +44,7 @@ export function DashboardPage({ diaryOnly = false }: { diaryOnly?: boolean }) {
               : `${profile.display_name ? `Hey ${profile.display_name}, l` : 'L'}et’s make room for a little balance.`}
           </p>
         </div>
-        <Button onClick={() => setAdding(true)}>
+        <Button className="add-food-button" onClick={() => setAdding(true)}>
           <Plus />
           Add food
         </Button>
@@ -67,7 +67,14 @@ export function DashboardPage({ diaryOnly = false }: { diaryOnly?: boolean }) {
               <h2>{date === localDate() ? 'Today’s meals' : 'Your meals'}</h2>
               <span>{dateTitle(date)}</span>
             </div>
-            <span className="meal-count">{mealsLogged} of 4 meals logged</span>
+            <span className="meal-count">
+              <span className="meal-progress-dots" aria-hidden="true">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <i key={index} className={index < mealsLogged ? 'filled' : ''} />
+                ))}
+              </span>
+              {mealsLogged} of 4 meals logged
+            </span>
           </div>
           {loading ? (
             <div className="space-y-4" aria-label="Loading meals">

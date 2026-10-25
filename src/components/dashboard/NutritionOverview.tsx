@@ -45,8 +45,8 @@ export function NutritionOverview() {
                   isAnimationActive={false}
                   cornerRadius={10}
                 >
-                  <Cell fill="#315c45" />
-                  <Cell fill="#edf0e9" />
+                  <Cell fill="#c9dfa5" />
+                  <Cell fill="#ffffff24" />
                 </Pie>
               </PieChart>
             </ResponsiveContainer>

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   ArrowUpRight,
   BookOpen,
@@ -32,6 +32,8 @@ export function AppLayout() {
   const auth = useAuth(),
     diary = useDiary(),
     navigate = useNavigate()
+  const { pathname } = useLocation()
+  const currentPage = links.find((link) => link.to === pathname)?.label || 'Overview'
   const [adding, setAdding] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const name = diary.profile.display_name || auth.session?.user.email?.split('@')[0] || 'You'
@@ -118,7 +120,7 @@ export function AppLayout() {
           </div>
           <div className="desktop-breadcrumb">
             Your space<span>/</span>
-            <span>Nutrition, made simple</span>
+            <span>{currentPage}</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="connection-status">

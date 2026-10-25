@@ -1,31 +1,40 @@
-import { Component, type ReactNode } from 'react'
+import { Component, lazy, Suspense, type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/features/auth/AuthProvider'
 import { useAuth } from '@/features/auth/useAuth'
 import { AuthPage } from '@/features/auth/AuthPage'
-import { DiaryProvider } from '@/features/food-logging/DiaryProvider'
-import { AppLayout } from '@/components/layout/AppLayout'
-import { DashboardPage } from '@/features/nutrition/DashboardPage'
-import { FoodsPage } from '@/features/food-logging/FoodsPage'
-import { ProfilePage } from '@/features/profile/ProfilePage'
 import { Leaf } from 'lucide-react'
+
+const DiaryApp = lazy(() =>
+  import('@/features/food-logging/DiaryApp').then((module) => ({ default: module.DiaryApp })),
+)
+const DashboardPage = lazy(() =>
+  import('@/features/nutrition/DashboardPage').then((module) => ({
+    default: module.DashboardPage,
+  })),
+)
+const FoodsPage = lazy(() =>
+  import('@/features/food-logging/FoodsPage').then((module) => ({ default: module.FoodsPage })),
+)
+const ProfilePage = lazy(() =>
+  import('@/features/profile/ProfilePage').then((module) => ({ default: module.ProfilePage })),
+)
+
+function AppLoading() {
+  return (
+    <div className="app-loading" role="status">
+      <Leaf className="animate-pulse" />
+      Getting your space ready…
+    </div>
+  )
+}
 
 function ProtectedApp() {
   const { session, demo, loading } = useAuth()
-  if (loading)
-    return (
-      <div className="app-loading" role="status">
-        <Leaf className="animate-pulse" />
-        Getting your space ready…
-      </div>
-    )
+  if (loading) return <AppLoading />
   if (!session && !demo) return <Navigate to="/login" replace />
-  return (
-    <DiaryProvider key={demo ? 'demo' : session!.user.id}>
-      <AppLayout />
-    </DiaryProvider>
-  )
+  return <DiaryApp accountId={demo ? 'demo' : session!.user.id} />
 }
 class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
@@ -51,16 +60,18 @@ export default function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<AuthPage />} />
-            <Route element={<ProtectedApp />}>
-              <Route index element={<DashboardPage />} />
-              <Route path="diary" element={<DashboardPage diaryOnly />} />
-              <Route path="foods" element={<FoodsPage />} />
-              <Route path="profile" element={<ProfilePage />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={<AppLoading />}>
+            <Routes>
+              <Route path="/login" element={<AuthPage />} />
+              <Route element={<ProtectedApp />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="diary" element={<DashboardPage diaryOnly />} />
+                <Route path="foods" element={<FoodsPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
           <Toaster position="top-center" richColors closeButton />
         </AuthProvider>
       </BrowserRouter>

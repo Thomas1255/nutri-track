@@ -18,7 +18,8 @@ import { useDiary } from '@/features/food-logging/useDiary'
 import { Button } from '@/components/ui/button'
 import { ErrorState } from '@/components/ui/error-state'
 import { errorMessage } from '@/lib/utils'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { FoodDialog } from '@/components/foods/FoodDialog'
 
 const links = [
@@ -156,7 +157,9 @@ export function AppLayout() {
               </Button>
             </div>
           ) : (
-            <Outlet />
+            <Suspense fallback={<Skeleton className="h-64" aria-label="Loading page" />}>
+              <Outlet />
+            </Suspense>
           )}
         </main>
         <footer className="app-footer">

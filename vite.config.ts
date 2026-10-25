@@ -15,6 +15,16 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+    build: {
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            // Keep the backend SDK cached separately from application updates.
+            groups: [{ name: 'supabase', test: /[\\/]node_modules[\\/]@supabase[\\/]/ }],
+          },
+        },
+      },
+    },
     test: {
       environment: 'jsdom',
       // Local Supabase credentials must not switch fixture-based tests into account mode.

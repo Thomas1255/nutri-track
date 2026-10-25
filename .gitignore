@@ -22,3 +22,6 @@ qa/
 # Keep Markdown documentation local; do not publish it to GitHub.
 *.[mM][dD]
 *.[mM][aA][rR][kK][dD][oO][wW][nN]
+
+.vercel
+.env*

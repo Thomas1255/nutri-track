@@ -14,16 +14,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!supabase) return
     let active = true
+    let authChanged = false
     supabase.auth
       .getSession()
       .then(({ data, error: authError }) => {
-        if (!active) return
+        if (!active || authChanged) return
         if (authError) setError(authError.message)
         setSession(data.session)
+        if (data.session) {
+          setDemo(false)
+          sessionStorage.removeItem('nutritrack.demo')
+        }
         setLoading(false)
       })
       .catch((error) => {
-        if (active) {
+        if (active && !authChanged) {
           setError(errorMessage(error))
           setLoading(false)
         }
@@ -32,6 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, next) => {
       if (active) {
+        authChanged = true
+        setError(null)
         setSession(next)
         setLoading(false)
         if (next) {

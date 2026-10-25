@@ -1,10 +1,11 @@
 import { beforeEach, expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { AuthProvider } from '@/features/auth/AuthProvider'
 import { useAuth } from '@/features/auth/useAuth'
 import { AuthPage } from '@/features/auth/AuthPage'
+import type { Session } from '@supabase/supabase-js'
 
 const auth = vi.hoisted(() => ({
   getSession: vi.fn(),
@@ -84,4 +85,55 @@ it('restores a saved Supabase session and signs out', async () => {
   await user.click(screen.getByRole('button', { name: 'Log out' }))
   await screen.findByText('Signed out')
   expect(auth.signOut).toHaveBeenCalledOnce()
+})
+
+function SessionStatus() {
+  const { session, loading, demo } = useAuth()
+  return (
+    <p>
+      {loading
+        ? 'Loading session'
+        : session
+          ? session.user.email
+          : demo
+            ? 'Demo session'
+            : 'Signed out'}
+    </p>
+  )
+}
+it('does not overwrite a new sign-in with a stale session lookup', async () => {
+  let resolveSession!: (value: { data: { session: null }; error: null }) => void
+  auth.getSession.mockReturnValue(
+    new Promise((resolve) => {
+      resolveSession = resolve
+    }),
+  )
+  render(
+    <AuthProvider>
+      <SessionStatus />
+    </AuthProvider>,
+  )
+  const listener = auth.onAuthStateChange.mock.calls[0][0]
+  await act(async () => {
+    listener('SIGNED_IN', { user: { id: 'new-user', email: 'new@example.com' } } as Session)
+  })
+  expect(screen.getByText('new@example.com')).toBeInTheDocument()
+  await act(async () => {
+    resolveSession({ data: { session: null }, error: null })
+  })
+  expect(screen.getByText('new@example.com')).toBeInTheDocument()
+})
+it('returns to the authenticated account when restoring a session from demo mode', async () => {
+  sessionStorage.setItem('nutritrack.demo', 'true')
+  auth.getSession.mockResolvedValue({
+    data: { session: { user: { id: 'u', email: 'returning@example.com' } } },
+    error: null,
+  })
+  render(
+    <AuthProvider>
+      <SessionStatus />
+    </AuthProvider>,
+  )
+  await screen.findByText('returning@example.com')
+  expect(sessionStorage.getItem('nutritrack.demo')).toBeNull()
 })

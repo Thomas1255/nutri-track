@@ -17,6 +17,12 @@ export default defineConfig(({ mode }) => {
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     test: {
       environment: 'jsdom',
+      // Local Supabase credentials must not switch fixture-based tests into account mode.
+      env: {
+        VITE_SUPABASE_URL: '',
+        VITE_SUPABASE_PUBLISHABLE_KEY: '',
+        VITE_AUTH_REDIRECT_URL: '',
+      },
       setupFiles: ['./src/test/setup.ts'],
       css: false,
       exclude: ['node_modules/**', 'supabase/**'],

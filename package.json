@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "check": "npm run lint && npm test && npm run build",
+    "backend:check": "node scripts/check-backend.mjs",
     "cap:sync": "npm run build && cap sync",
     "cap:android": "cap open android",
     "cap:ios": "cap open ios",

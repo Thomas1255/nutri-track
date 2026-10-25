@@ -15,6 +15,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+    server: {
+      watch: { ignored: ['**/qa/**', '**/android/**', '**/ios/**'] },
+    },
     build: {
       rolldownOptions: {
         output: {

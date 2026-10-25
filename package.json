@@ -15,6 +15,7 @@
     "lint": "eslint .",
     "check": "npm run lint && npm test && npm run build",
     "backend:check": "node scripts/check-backend.mjs",
+    "backend:smoke:usda": "node scripts/smoke-usda.mjs",
     "cap:sync": "npm run build && cap sync",
     "cap:android": "cap open android",
     "cap:ios": "cap open ios",
